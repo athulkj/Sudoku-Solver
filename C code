@@ -1,0 +1,105 @@
+#include<stdio.h>
+int rowvalid(int i,int k,int s[9][9])
+{
+  for(int j=0;j<9;j++)
+  {
+      if(s[i][j]==k)
+      return 0;
+  }
+   return 1;
+}
+int colvalid(int j,int k,int s[9][9])
+{
+    for(int i=0;i<9;i++)
+  {
+      if(s[i][j]==k)
+      return 0;
+  }
+   return 1;
+}
+int boxvalid(int i,int j,int k,int s[9][9])
+{
+    int l,m,p,q;
+    for(l=3;l<=9;l+=3)
+    {
+        for(m=3;m<=9;m+=3)
+        {
+            if(((i<l)&&(i>=l-3))&&((j<m)&&(j>=m-3)))
+            {
+                for(p=l-3;p<l;p++)
+                {
+                    for(q=m-3;q<m;q++)
+                    {
+                        if(s[p][q]==k) return 0;
+                    }
+                }
+            }
+        }
+    }
+    return 1;
+}
+void sudsol(int s[9][9],int * a[81],int count,int mark)
+{
+    int i,j,k,z=0;
+    if(count==mark+1)
+    return ;
+    for(i=0;i<9;i++)
+    {
+        for(j=0;j<9;j++)
+        {
+            if(&s[i][j]==a[count])
+            {
+                for(k=s[i][j]+1;k<=9;k++)
+                {
+                    if(rowvalid(i,k,s)&&colvalid(j,k,s)&&boxvalid(i,j,k,s)&&*a[count]!=k)
+                    {
+                         *a[count]=k;
+                         z=1;
+                         return sudsol(s,a,count+1,mark);
+                         break;
+                    }
+                }
+                if(z==0){
+                    s[i][j]=0;
+                    return sudsol(s,a,count-1,mark);
+                    
+                }
+                
+            }
+        }
+    }
+}
+int main()
+{
+    int sud[9][9];
+    int mark=0;
+    int * pt[81];//define later.
+    for(int i=0;i<9;i++)
+    {
+        for(int j=0;j<9;j++)
+        {
+            scanf("%d",&sud[i][j]);
+        }
+    }
+    for(int i=0;i<9;i++)
+    {
+        for(int j=0;j<9;j++)
+        {
+            if(sud[i][j]==0)
+            {
+                pt[mark]=&sud[i][j];
+                mark+=1;
+            }
+        }
+    }
+    sudsol(sud,pt,0,mark); 
+    for(int i=0;i<9;i++)
+    {
+        for(int j=0;j<9;j++)
+        {
+            printf("%d ",sud[i][j]);
+        }
+        printf("\n");
+    }
+    return 0;
+}
